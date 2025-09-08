@@ -1,0 +1,37 @@
+文件放置指南
+============
+
+请将文件按以下结构放置：
+
+根目录文件 (~/ros2_ws/src/two_wheel_robot/):
+├── package.xml                    # ROS2包配置文件
+├── CMakeLists.txt                 # CMake构建配置
+├── README.md                      # 项目说明文档
+├── setup_and_run.sh              # 快速启动脚本
+├── install_dependencies.sh       # 依赖安装脚本
+└── TROUBLESHOOTING.md            # 故障排除指南
+
+src/ (C++源文件):
+├── robot_monitor.cpp             # 机器人状态监控器
+└── autonomous_navigator.cpp      # 自动导航控制器
+
+scripts/ (Python脚本):
+└── robot_dashboard.py           # GUI监控面板
+
+launch/ (启动文件):
+├── robot_simulation.launch.py   # 主仿真启动文件
+└── visualize_graph.launch.py    # 计算图可视化
+
+urdf/ (机器人模型):
+└── two_wheel_robot.urdf.xacro   # 机器人URDF描述
+
+config/ (配置文件):
+└── robot_view.rviz              # RViz可视化配置
+
+worlds/ (Gazebo世界):
+└── simple_world.world           # 仿真环境描述
+
+完成文件放置后，运行以下命令：
+1. chmod +x setup_and_run.sh install_dependencies.sh
+2. ./install_dependencies.sh
+3. ./setup_and_run.sh --build
