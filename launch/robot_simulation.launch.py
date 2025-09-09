@@ -28,6 +28,7 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration('use_rviz')
     use_teleop = LaunchConfiguration('use_teleop')
     use_autonomous = LaunchConfiguration('use_autonomous')
+    use_image_view = LaunchConfiguration('use_image_view')
     
     # Launch arguments
     declare_use_sim_time = DeclareLaunchArgument(
@@ -52,6 +53,12 @@ def generate_launch_description():
         'use_autonomous',
         default_value='false',
         description='Whether to launch autonomous navigation'
+    )
+    
+    declare_use_image_view = DeclareLaunchArgument(
+        'use_image_view',
+        default_value='true',
+        description='Whether to launch camera image viewer'
     )
     
     # Robot description
@@ -108,17 +115,7 @@ def generate_launch_description():
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}]
     )
-    # Image view node for camera display
-    image_view_node = Node(
-        package='rqt_image_view',
-        executable='rqt_image_view',
-        name='rqt_image_view',
-        arguments=['/robot_camera/image_raw'],
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}],
-        condition=IfCondition(use_image_view)
-    )    
-
+    
     # Autonomous navigator (optional)
     autonomous_navigator_node = Node(
         package='two_wheel_robot',
@@ -129,6 +126,7 @@ def generate_launch_description():
         condition=IfCondition(use_autonomous)
     )
     
+    # RViz
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
@@ -148,12 +146,24 @@ def generate_launch_description():
         condition=IfCondition(use_teleop),
         prefix='xterm -e'
     )
+    
+    # Image view node for camera display
+    image_view_node = Node(
+        package='rqt_image_view',
+        executable='rqt_image_view',
+        name='rqt_image_view',
+        arguments=['/robot_camera/image_raw'],
+        output='screen',
+        parameters=[{'use_sim_time': use_sim_time}],
+        condition=IfCondition(use_image_view)
+    )
 
     return LaunchDescription([
         declare_use_sim_time,
         declare_use_rviz,
         declare_use_teleop,
         declare_use_autonomous,
+        declare_use_image_view,
         
         robot_state_publisher_node,
         joint_state_publisher_node,
