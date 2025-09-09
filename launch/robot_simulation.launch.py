@@ -118,7 +118,7 @@ def generate_launch_description():
         parameters=[{'use_sim_time': use_sim_time}],
         condition=IfCondition(use_image_view)
     )    
-    
+
     # Autonomous navigator (optional)
     autonomous_navigator_node = Node(
         package='two_wheel_robot',
@@ -163,5 +163,5 @@ def generate_launch_description():
         teleop_node,
         robot_monitor_node,
         autonomous_navigator_node
-        #image_view_node
+        image_view_node
     ])
