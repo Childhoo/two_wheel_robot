@@ -162,6 +162,6 @@ def generate_launch_description():
         rviz_node,
         teleop_node,
         robot_monitor_node,
-        autonomous_navigator_node
+        autonomous_navigator_node,
         image_view_node
     ])
