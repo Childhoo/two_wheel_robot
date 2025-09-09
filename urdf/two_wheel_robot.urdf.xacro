@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="two_wheel_robot">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="four_wheel_robot">
 
   <xacro:property name="chassis_width" value="0.3"/>
   <xacro:property name="chassis_length" value="0.4"/>
   <xacro:property name="chassis_height" value="0.1"/>
-  <xacro:property name="wheel_radius" value="0.12"/>
-  <xacro:property name="wheel_width" value="0.05"/>
+  <xacro:property name="wheel_radius" value="0.08"/>
+  <xacro:property name="wheel_width" value="0.04"/>
   <xacro:property name="wheel_separation" value="0.35"/>
+  <xacro:property name="wheelbase" value="0.25"/>
 
   <!-- Base Link -->
   <link name="base_link"/>
@@ -29,19 +30,19 @@
       </geometry>
     </collision>
     <inertial>
-      <mass value="5.0"/>
-      <inertia ixx="0.083" ixy="0.0" ixz="0.0" iyy="0.083" iyz="0.0" izz="0.083"/>
+      <mass value="8.0"/>
+      <inertia ixx="0.13" ixy="0.0" ixz="0.0" iyy="0.13" iyz="0.0" izz="0.13"/>
     </inertial>
   </link>
 
   <joint name="base_to_chassis" type="fixed">
     <parent link="base_link"/>
     <child link="chassis"/>
-    <origin xyz="0 0 ${wheel_radius}"/>
+    <origin xyz="0 0 ${wheel_radius + 0.02}"/>
   </joint>
 
-  <!-- Left Wheel -->
-  <link name="left_wheel">
+  <!-- Rear Left Wheel -->
+  <link name="rear_left_wheel">
     <visual>
       <origin xyz="0 0 0" rpy="1.5708 0 0"/>
       <geometry>
@@ -59,19 +60,19 @@
     </collision>
     <inertial>
       <mass value="1.0"/>
-      <inertia ixx="0.005" ixy="0.0" ixz="0.0" iyy="0.005" iyz="0.0" izz="0.01"/>
+      <inertia ixx="0.004" ixy="0.0" ixz="0.0" iyy="0.004" iyz="0.0" izz="0.008"/>
     </inertial>
   </link>
 
-  <joint name="left_wheel_joint" type="continuous">
+  <joint name="rear_left_wheel_joint" type="continuous">
     <parent link="chassis"/>
-    <child link="left_wheel"/>
-    <origin xyz="0.01 ${wheel_separation/2} ${-wheel_radius}" rpy="0 0 0"/>
+    <child link="rear_left_wheel"/>
+    <origin xyz="${-wheelbase/2} ${wheel_separation/2} ${-chassis_height/2 - 0.02}" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
 
-  <!-- Right Wheel -->
-  <link name="right_wheel">
+  <!-- Rear Right Wheel -->
+  <link name="rear_right_wheel">
     <visual>
       <origin xyz="0 0 0" rpy="1.5708 0 0"/>
       <geometry>
@@ -89,14 +90,74 @@
     </collision>
     <inertial>
       <mass value="1.0"/>
-      <inertia ixx="0.005" ixy="0.0" ixz="0.0" iyy="0.005" iyz="0.0" izz="0.01"/>
+      <inertia ixx="0.004" ixy="0.0" ixz="0.0" iyy="0.004" iyz="0.0" izz="0.008"/>
     </inertial>
   </link>
 
-  <joint name="right_wheel_joint" type="continuous">
+  <joint name="rear_right_wheel_joint" type="continuous">
     <parent link="chassis"/>
-    <child link="right_wheel"/>
-    <origin xyz="0.01 ${-wheel_separation/2} ${-wheel_radius}" rpy="0 0 0"/>
+    <child link="rear_right_wheel"/>
+    <origin xyz="${-wheelbase/2} ${-wheel_separation/2} ${-chassis_height/2 - 0.02}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <!-- Front Left Wheel -->
+  <link name="front_left_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0.2 0.2 0.2 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.004" ixy="0.0" ixz="0.0" iyy="0.004" iyz="0.0" izz="0.008"/>
+    </inertial>
+  </link>
+
+  <joint name="front_left_wheel_joint" type="continuous">
+    <parent link="chassis"/>
+    <child link="front_left_wheel"/>
+    <origin xyz="${wheelbase/2} ${wheel_separation/2} ${-chassis_height/2 - 0.02}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <!-- Front Right Wheel -->
+  <link name="front_right_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0.2 0.2 0.2 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.004" ixy="0.0" ixz="0.0" iyy="0.004" iyz="0.0" izz="0.008"/>
+    </inertial>
+  </link>
+
+  <joint name="front_right_wheel_joint" type="continuous">
+    <parent link="chassis"/>
+    <child link="front_right_wheel"/>
+    <origin xyz="${wheelbase/2} ${-wheel_separation/2} ${-chassis_height/2 - 0.02}" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
 
@@ -129,19 +190,19 @@
     <origin xyz="${chassis_length/2} 0 ${chassis_height/2 + 0.05}" rpy="0 0 0"/>
   </joint>
 
-  <!-- Gazebo Plugins -->
+  <!-- Four-Wheel Drive Plugin -->
   <gazebo>
-    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+    <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_diff_drive.so">
       <ros>
         <namespace>/</namespace>
       </ros>
       <update_rate>30</update_rate>
-      <left_joint>left_wheel_joint</left_joint>
-      <right_joint>right_wheel_joint</right_joint>
+      <left_joint>rear_left_wheel_joint</left_joint>
+      <right_joint>rear_right_wheel_joint</right_joint>
       <wheel_separation>${wheel_separation}</wheel_separation>
       <wheel_diameter>${2*wheel_radius}</wheel_diameter>
-      <max_wheel_torque>20</max_wheel_torque>
-      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+      <max_wheel_torque>30</max_wheel_torque>
+      <max_wheel_acceleration>2.0</max_wheel_acceleration>
       <command_topic>cmd_vel</command_topic>
       <publish_odom>true</publish_odom>
       <publish_odom_tf>true</publish_odom_tf>
@@ -154,33 +215,29 @@
 
   <!-- Camera Plugin -->
   <gazebo reference="camera_link">
-    <sensor type="camera" name="camera">           <!-- 1. 传感器定义 -->
-      <update_rate>30.0</update_rate>              <!-- 2. 更新频率 -->
-      
-      <camera name="head">                         <!-- 3. 相机参数组 -->
-        <horizontal_fov>1.3962634</horizontal_fov> <!-- 4. 视场角 -->
-        
-        <image>                                    <!-- 5. 图像参数 -->
-          <width>640</width>                       <!-- 图像宽度 -->
-          <height>480</height>                     <!-- 图像高度 -->
-          <format>R8G8B8</format>                  <!-- 像素格式 -->
+    <sensor type="camera" name="camera">
+      <update_rate>30.0</update_rate>
+      <camera name="head">
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
         </image>
-        
-        <clip>                                     <!-- 6. 裁剪距离 -->
-          <near>0.02</near>                        <!-- 最近距离 -->
-          <far>300</far>                           <!-- 最远距离 -->
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
         </clip>
       </camera>
-      
-      <plugin name="camera_controller" filename="libgazebo_ros_camera.so"> <!-- 7. ROS2插件 -->
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
         <ros>
           <namespace>/</namespace>
-          <remapping>image_raw:=robot_camera/image_raw</remapping>        <!-- 8. 话题重映射 -->
+          <remapping>image_raw:=robot_camera/image_raw</remapping>
           <remapping>camera_info:=robot_camera/camera_info</remapping>
         </ros>
-        <camera_name>robot_camera</camera_name>    <!-- 9. 相机名称 -->
-        <frame_name>camera_link</frame_name>       <!-- 10. TF坐标系 -->
-        <hack_baseline>0.07</hack_baseline>        <!-- 11. 立体视觉参数 -->
+        <camera_name>robot_camera</camera_name>
+        <frame_name>camera_link</frame_name>
+        <hack_baseline>0.07</hack_baseline>
       </plugin>
     </sensor>
   </gazebo>
@@ -190,11 +247,19 @@
     <material>Gazebo/Blue</material>
   </gazebo>
 
-  <gazebo reference="left_wheel">
+  <gazebo reference="rear_left_wheel">
     <material>Gazebo/DarkGrey</material>
   </gazebo>
 
-  <gazebo reference="right_wheel">
+  <gazebo reference="rear_right_wheel">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="front_left_wheel">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="front_right_wheel">
     <material>Gazebo/DarkGrey</material>
   </gazebo>
 
