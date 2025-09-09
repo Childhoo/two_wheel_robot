@@ -286,17 +286,25 @@
   </gazebo>
 
   <gazebo reference="front_caster">
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/White</material>
     <!-- 脚轮低摩擦 -->
-    <mu1>0.1</mu1>
-    <mu2>0.1</mu2>
+    <mu1>0.05</mu1>
+    <mu2>0.05</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>1.0</maxVel>
   </gazebo>
 
   <gazebo reference="rear_caster">
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/White</material>
     <!-- 脚轮低摩擦 -->
-    <mu1>0.1</mu1>
-    <mu2>0.1</mu2>
+    <mu1>0.05</mu1>
+    <mu2>0.05</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>1.0</maxVel>
   </gazebo>
 
   <gazebo reference="camera_link">
