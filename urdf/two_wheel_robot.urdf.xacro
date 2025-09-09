@@ -4,7 +4,7 @@
   <xacro:property name="chassis_width" value="0.3"/>
   <xacro:property name="chassis_length" value="0.4"/>
   <xacro:property name="chassis_height" value="0.1"/>
-  <xacro:property name="wheel_radius" value="0.1"/>
+  <xacro:property name="wheel_radius" value="0.12"/>
   <xacro:property name="wheel_width" value="0.05"/>
   <xacro:property name="wheel_separation" value="0.35"/>
 
@@ -66,7 +66,7 @@
   <joint name="left_wheel_joint" type="continuous">
     <parent link="chassis"/>
     <child link="left_wheel"/>
-    <origin xyz="-0.05 ${wheel_separation/2} ${-wheel_radius}" rpy="0 0 0"/>
+    <origin xyz="0 ${wheel_separation/2} ${-wheel_radius}" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
 
@@ -96,7 +96,7 @@
   <joint name="right_wheel_joint" type="continuous">
     <parent link="chassis"/>
     <child link="right_wheel"/>
-    <origin xyz="-0.05 ${-wheel_separation/2} ${-wheel_radius}" rpy="0 0 0"/>
+    <origin xyz="0 ${-wheel_separation/2} ${-wheel_radius}" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
 
