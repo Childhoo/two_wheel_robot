@@ -163,17 +163,6 @@
       <image_topic>image_raw</image_topic>
       <camera_info_topic>camera_info</camera_info_topic>
       <update_rate>30.0</update_rate>
-      <horizontal_fov>1.3962634</horizontal_fov>
-      <image_width>640</image_width>
-      <image_height>480</image_height>
-      <image_format>R8G8B8</image_format>
-      <clip_near>0.02</clip_near>
-      <clip_far>300</clip_far>
-      <noise>
-        <type>gaussian</type>
-        <mean>0.0</mean>
-        <stddev>0.01</stddev>
-      </noise>
     </plugin>
   </gazebo>
 
