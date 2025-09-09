@@ -1,37 +1,37 @@
 # Two-Wheel Robot Simulation Package
 
-这是一个完整的ROS2 package，用于仿真一个带相机的两轮机器人。该package包含了机器人模型、仿真环境、控制程序以及可视化工具。
+This is a complete ROS2 package for simulating a two-wheel robot with camera. The package includes robot model, simulation environment, control programs, and visualization tools.
 
-## 功能特性
+## Features
 
-- 🤖 **机器人仿真**: 完整的两轮差动驱动机器人模型
-- 📷 **相机集成**: 机器人配备前向相机，可实时输出图像
-- 🎮 **手动控制**: 支持键盘遥控操作
-- 🧠 **自动导航**: 内置多种自动移动模式
-- 📊 **实时监控**: 显示机器人状态和运动参数
-- 🔍 **图形可视化**: RViz可视化和计算图显示
+- 🤖 **Robot Simulation**: Complete two-wheel differential drive robot model
+- 📷 **Camera Integration**: Robot equipped with forward-facing camera for real-time image output
+- 🎮 **Manual Control**: Keyboard teleoperation support
+- 🧠 **Autonomous Navigation**: Built-in multiple automatic movement patterns
+- 📊 **Real-time Monitoring**: Display robot status and motion parameters
+- 🔍 **Graphical Visualization**: RViz visualization and computation graph display
 
-## 系统要求
+## System Requirements
 
-- ROS2 (Humble或更新版本)
+- ROS2 (Humble or newer)
 - Gazebo Classic
 - Python 3.8+
-- 以下ROS2包:
+- Following ROS2 packages:
   - `gazebo_ros_pkgs`
   - `robot_state_publisher`
   - `teleop_twist_keyboard`
   - `rviz2`
-  - `rqt_*` 工具包
+  - `rqt_*` toolkits
 
-## 安装步骤
+## Installation
 
-1. **创建工作空间**:
+1. **Create workspace**:
 ```bash
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src
 ```
 
-2. **复制文件结构**:
+2. **Copy file structure**:
 ```
 two_wheel_robot/
 ├── CMakeLists.txt
@@ -51,204 +51,204 @@ two_wheel_robot/
     └── simple_world.world
 ```
 
-3. **编译包**:
+3. **Build package**:
 ```bash
 cd ~/ros2_ws
 colcon build --packages-select two_wheel_robot
 source install/setup.bash
 ```
 
-## 使用方法
+## Usage
 
-### 基本仿真启动
+### Basic Simulation Launch
 
-启动完整的机器人仿真环境：
+Launch complete robot simulation environment:
 
 ```bash
 ros2 launch two_wheel_robot robot_simulation.launch.py
 ```
 
-这将启动：
-- Gazebo仿真环境
-- 机器人模型
-- RViz可视化
-- 相机图像查看器
-- 键盘控制终端
-- 机器人状态监控器
+This will start:
+- Gazebo simulation environment
+- Robot model
+- RViz visualization
+- Camera image viewer
+- Keyboard control terminal
+- Robot status monitor
 
-### 仅启动自动导航
+### Launch Autonomous Navigation Only
 
-如果你想要机器人自动移动：
+If you want the robot to move automatically:
 
 ```bash
 ros2 launch two_wheel_robot robot_simulation.launch.py use_autonomous:=true use_teleop:=false
 ```
 
-### 手动键盘控制
+### Manual Keyboard Control
 
-在键盘控制终端中使用以下按键：
-- `i`: 前进
-- `k`: 停止
-- `j`: 左转
-- `l`: 右转
-- `u`: 前进左转
-- `o`: 前进右转
-- `m`: 后退左转
-- `.`: 后退右转
-- `,`: 后退
-- `q/z`: 增加/减少线速度
-- `w/x`: 增加/减少角速度
+Use the following keys in the keyboard control terminal:
+- `i`: Move forward
+- `k`: Stop
+- `j`: Turn left
+- `l`: Turn right
+- `u`: Forward + left turn
+- `o`: Forward + right turn
+- `m`: Backward + left turn
+- `.`: Backward + right turn
+- `,`: Move backward
+- `q/z`: Increase/decrease linear velocity
+- `w/x`: Increase/decrease angular velocity
 
-### 可视化计算图
+### Visualize Computation Graph
 
-查看ROS2节点和话题的关系图：
+View ROS2 nodes and topics relationship graph:
 
 ```bash
 ros2 launch two_wheel_robot visualize_graph.launch.py
 ```
 
-## 主要组件说明
+## Main Components
 
-### 1. 机器人模型 (URDF)
-- **文件**: `urdf/two_wheel_robot.urdf.xacro`
-- **功能**: 定义机器人的物理结构，包括底盘、轮子和相机
-- **传感器**: 配置了差动驱动控制器和相机插件
+### 1. Robot Model (URDF)
+- **File**: `urdf/two_wheel_robot.urdf.xacro`
+- **Function**: Defines robot's physical structure including chassis, wheels, and camera
+- **Sensors**: Configured with differential drive controller and camera plugin
 
-### 2. 仿真环境 (Gazebo World)
-- **文件**: `worlds/simple_world.world`
-- **内容**: 包含地面平面和几个障碍物供导航测试
+### 2. Simulation Environment (Gazebo World)
+- **File**: `worlds/simple_world.world`
+- **Content**: Contains ground plane and several obstacles for navigation testing
 
-### 3. 状态监控器
-- **文件**: `src/robot_monitor.cpp`
-- **功能**: 实时显示机器人的运动参数、位置信息和相机状态
-- **输出**: 终端中的格式化状态信息
+### 3. Status Monitor
+- **File**: `src/robot_monitor.cpp`
+- **Function**: Real-time display of robot motion parameters, position information, and camera status
+- **Output**: Formatted status information in terminal
 
-### 4. 自动导航器
-- **文件**: `src/autonomous_navigator.cpp`
-- **模式**: 支持多种自动移动模式：
-  - 直线前进
-  - 圆形运动
-  - 8字形轨迹
-  - 随机游走
-  - 螺旋运动
+### 4. Autonomous Navigator
+- **File**: `src/autonomous_navigator.cpp`
+- **Patterns**: Supports multiple automatic movement patterns:
+  - Straight line forward
+  - Circular motion
+  - Figure-8 trajectory
+  - Random walk
+  - Spiral motion
 
-## 话题和服务
+## Topics and Services
 
-### 发布的话题
-- `/cmd_vel` (geometry_msgs/Twist): 速度控制指令
-- `/odom` (nav_msgs/Odometry): 里程计信息
-- `/robot_camera/image_raw` (sensor_msgs/Image): 相机图像
-- `/robot_camera/camera_info` (sensor_msgs/CameraInfo): 相机参数
+### Published Topics
+- `/cmd_vel` (geometry_msgs/Twist): Velocity control commands
+- `/odom` (nav_msgs/Odometry): Odometry information
+- `/robot_camera/image_raw` (sensor_msgs/Image): Camera images
+- `/robot_camera/camera_info` (sensor_msgs/CameraInfo): Camera parameters
 
-### 订阅的话题
-- `/cmd_vel`: 接收控制指令
-- TF变换: 机器人各部件的坐标变换
+### Subscribed Topics
+- `/cmd_vel`: Receive control commands
+- TF transforms: Coordinate transformations between robot components
 
-## RViz可视化
+## RViz Visualization
 
-RViz配置文件包含以下显示项：
-- 机器人3D模型
-- TF坐标系
-- 里程计轨迹
-- 相机图像
-- 网格参考
+RViz configuration file includes the following display items:
+- Robot 3D model
+- TF coordinate frames
+- Odometry trajectory
+- Camera images
+- Grid reference
 
-## 自定义和扩展
+## Customization and Extension
 
-### 修改机器人参数
-编辑 `urdf/two_wheel_robot.urdf.xacro` 中的xacro属性：
+### Modify Robot Parameters
+Edit xacro properties in `urdf/two_wheel_robot.urdf.xacro`:
 ```xml
 <xacro:property name="wheel_radius" value="0.1"/>
 <xacro:property name="wheel_separation" value="0.35"/>
 <xacro:property name="chassis_length" value="0.4"/>
 ```
 
-### 添加新的导航模式
-在 `src/autonomous_navigator.cpp` 中添加新的NavigationPattern枚举值和对应的执行函数。
+### Add New Navigation Patterns
+Add new NavigationPattern enum values and corresponding execution functions in `src/autonomous_navigator.cpp`.
 
-### 环境定制
-修改 `worlds/simple_world.world` 文件来添加新的障碍物或改变环境布局。
+### Environment Customization
+Modify `worlds/simple_world.world` file to add new obstacles or change environment layout.
 
-## 故障排除
+## Troubleshooting
 
-### 常见问题
+### Common Issues
 
-1. **Gazebo启动失败**:
+1. **Gazebo fails to start**:
 ```bash
-# 检查gazebo安装
+# Check gazebo installation
 gazebo --version
-# 重新安装gazebo_ros_pkgs
+# Reinstall gazebo_ros_pkgs
 sudo apt install ros-$ROS_DISTRO-gazebo-ros-pkgs
 ```
 
-2. **无法看到机器人模型**:
+2. **Cannot see robot model**:
 ```bash
-# 检查URDF语法
+# Check URDF syntax
 check_urdf ~/ros2_ws/install/two_wheel_robot/share/two_wheel_robot/urdf/two_wheel_robot.urdf.xacro
 ```
 
-3. **键盘控制无响应**:
-   - 确保键盘控制终端窗口处于激活状态
-   - 检查 `/cmd_vel` 话题是否正常发布：
+3. **Keyboard control unresponsive**:
+   - Ensure keyboard control terminal window is active
+   - Check if `/cmd_vel` topic is publishing normally:
    ```bash
    ros2 topic echo /cmd_vel
    ```
 
-4. **相机图像不显示**:
-   - 检查相机话题：
+4. **Camera image not displaying**:
+   - Check camera topics:
    ```bash
    ros2 topic list | grep camera
    ros2 topic hz /robot_camera/image_raw
    ```
 
-5. **TF变换错误**:
-   - 查看TF树：
+5. **TF transform errors**:
+   - View TF tree:
    ```bash
    ros2 run tf2_tools view_frames.py
    ```
 
-### 性能优化
+### Performance Optimization
 
-- 如果仿真运行缓慢，可以在启动时禁用某些可视化组件
-- 调整Gazebo的物理引擎参数以获得更好的性能
+- If simulation runs slowly, disable certain visualization components at startup
+- Adjust Gazebo physics engine parameters for better performance
 
-## 扩展功能建议
+## Extended Functionality Suggestions
 
-### 1. 传感器集成
-可以添加更多传感器：
-- 激光雷达 (LiDAR)
-- IMU (惯性测量单元)
-- 超声波传感器
+### 1. Sensor Integration
+Additional sensors can be added:
+- LiDAR (Light Detection and Ranging)
+- IMU (Inertial Measurement Unit)
+- Ultrasonic sensors
 
-### 2. 导航算法
-集成更高级的导航功能：
-- SLAM (同时定位与建图)
-- 路径规划算法
-- 障碍物避免
+### 2. Navigation Algorithms
+Integrate more advanced navigation features:
+- SLAM (Simultaneous Localization and Mapping)
+- Path planning algorithms
+- Obstacle avoidance
 
-### 3. 机器学习集成
-- 使用深度学习进行视觉导航
-- 强化学习控制策略
+### 3. Machine Learning Integration
+- Use deep learning for visual navigation
+- Reinforcement learning control strategies
 
-## 参考资料
+## References
 
-- [ROS2官方文档](https://docs.ros.org/en/humble/)
-- [Gazebo经典版教程](http://gazebosim.org/tutorials)
-- [URDF教程](http://wiki.ros.org/urdf/Tutorials)
-- [RViz2用户指南](https://github.com/ros2/rviz)
+- [ROS2 Official Documentation](https://docs.ros.org/en/humble/)
+- [Gazebo Classic Tutorials](http://gazebosim.org/tutorials)
+- [URDF Tutorials](http://wiki.ros.org/urdf/Tutorials)
+- [RViz2 User Guide](https://github.com/ros2/rviz)
 
-## 许可证
+## License
 
-本项目采用MIT许可证。详见LICENSE文件。
+This project is licensed under the MIT License. See LICENSE file for details.
 
-## 贡献
+## Contributing
 
-欢迎提交Issue和Pull Request来改进这个项目。
+Issues and Pull Requests are welcome to improve this project.
 
-## 联系方式
+## Contact
 
-如有问题，请通过GitHub Issues联系。
+For questions, please contact through GitHub Issues.
 
 ---
 
-**注意**: 首次运行可能需要下载Gazebo模型，这可能需要一些时间。请确保网络连接正常。
+**Note**: First run may require downloading Gazebo models, which may take some time. Please ensure stable network connection.
