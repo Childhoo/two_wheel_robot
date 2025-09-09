@@ -14,8 +14,7 @@ class RobotMonitor : public rclcpp::Node
 public:
     RobotMonitor() : Node("robot_monitor")
     {
-        // 声明使用仿真时间
-        this->declare_parameter("use_sim_time", true);
+        // 不需要声明use_sim_time，launch文件已经传递了
         
         cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(
             "cmd_vel", 10, 
@@ -44,11 +43,9 @@ public:
         position_y_ = 0.0;
         orientation_z_ = 0.0;
         camera_frame_count_ = 0;
-        
-        // 初始化时间为0，避免时间源问题
-        last_cmd_time_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
-        last_odom_time_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
-        last_camera_time_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
+        has_received_cmd_ = false;
+        has_received_odom_ = false;
+        has_received_camera_ = false;
     }
 
 private:
@@ -56,6 +53,7 @@ private:
     {
         current_linear_vel_ = msg->linear.x;
         current_angular_vel_ = msg->angular.z;
+        has_received_cmd_ = true;
         last_cmd_time_ = this->get_clock()->now();
     }
 
@@ -74,16 +72,18 @@ private:
         m.getRPY(roll, pitch, yaw);
         orientation_z_ = yaw;
         
+        has_received_odom_ = true;
         last_odom_time_ = this->get_clock()->now();
     }
 
     void image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     {
         camera_frame_count_++;
-        last_camera_time_ = this->get_clock()->now();
         image_width_ = msg->width;
         image_height_ = msg->height;
         image_encoding_ = msg->encoding;
+        has_received_camera_ = true;
+        last_camera_time_ = this->get_clock()->now();
     }
 
     void display_status()
@@ -101,48 +101,57 @@ private:
         
         auto now = this->get_clock()->now();
         
-        // 安全的时间计算
-        double time_since_cmd = 999.0; // 默认很大的值
-        if (last_cmd_time_.nanoseconds() > 0) {
-            try {
-                time_since_cmd = (now - last_cmd_time_).seconds();
-            } catch (const std::exception& e) {
-                time_since_cmd = 999.0;
-            }
-        }
-        
-        if (time_since_cmd > 2.0) {
-            std::cout << "  Status: 🛑 STOPPED\n";
-        } else if (abs(current_linear_vel_) > 0.01 || abs(current_angular_vel_) > 0.01) {
-            std::cout << "  Status: 🚗 MOVING\n";
+        // 检查运动状态
+        if (!has_received_cmd_) {
+            std::cout << "  Status: ⏳ WAITING FOR COMMANDS\n";
         } else {
-            std::cout << "  Status: ⏸️  IDLE\n";
+            try {
+                auto time_diff = (now - last_cmd_time_).seconds();
+                if (time_diff > 2.0) {
+                    std::cout << "  Status: 🛑 STOPPED (No recent commands)\n";
+                } else if (abs(current_linear_vel_) > 0.01 || abs(current_angular_vel_) > 0.01) {
+                    std::cout << "  Status: 🚗 MOVING\n";
+                } else {
+                    std::cout << "  Status: ⏸️  IDLE\n";
+                }
+            } catch (const std::exception& e) {
+                std::cout << "  Status: ❓ TIME ERROR\n";
+            }
         }
         
         std::cout << "\n📊 POSITION:\n";
-        std::cout << "  X: " << std::fixed << std::setprecision(3) << position_x_ << " m\n";
-        std::cout << "  Y: " << std::fixed << std::setprecision(3) << position_y_ << " m\n";
-        std::cout << "  Yaw: " << std::fixed << std::setprecision(3) 
-                  << orientation_z_ * 180.0 / M_PI << " degrees\n";
+        if (has_received_odom_) {
+            std::cout << "  X: " << std::fixed << std::setprecision(3) << position_x_ << " m\n";
+            std::cout << "  Y: " << std::fixed << std::setprecision(3) << position_y_ << " m\n";
+            std::cout << "  Yaw: " << std::fixed << std::setprecision(3) 
+                      << orientation_z_ * 180.0 / M_PI << " degrees\n";
+        } else {
+            std::cout << "  ⏳ Waiting for odometry data...\n";
+        }
         
         std::cout << "\n📷 CAMERA:\n";
-        std::cout << "  Frames: " << camera_frame_count_ << "\n";
-        std::cout << "  Resolution: " << image_width_ << "x" << image_height_ << "\n";
-        
-        double time_since_camera = 999.0;
-        if (last_camera_time_.nanoseconds() > 0) {
+        if (has_received_camera_) {
+            std::cout << "  Frames: " << camera_frame_count_ << "\n";
+            std::cout << "  Resolution: " << image_width_ << "x" << image_height_ << "\n";
+            std::cout << "  Encoding: " << image_encoding_ << "\n";
+            
             try {
-                time_since_camera = (now - last_camera_time_).seconds();
+                auto time_diff = (now - last_camera_time_).seconds();
+                if (time_diff > 2.0) {
+                    std::cout << "  Status: ❌ NO RECENT DATA\n";
+                } else {
+                    std::cout << "  Status: ✅ CAMERA ACTIVE\n";
+                }
             } catch (const std::exception& e) {
-                time_since_camera = 999.0;
+                std::cout << "  Status: ❓ TIME ERROR\n";
             }
+        } else {
+            std::cout << "  ⏳ Waiting for camera data...\n";
         }
         
-        if (time_since_camera > 2.0) {
-            std::cout << "  Status: ❌ NO CAMERA DATA\n";
-        } else {
-            std::cout << "  Status: ✅ CAMERA ACTIVE\n";
-        }
+        std::cout << "\n⚙️  SYSTEM:\n";
+        std::cout << "  Node: " << this->get_name() << "\n";
+        std::cout << "  Use Sim Time: " << (this->get_parameter("use_sim_time").as_bool() ? "Yes" : "No") << "\n";
         
         std::cout << "\n====================================\n";
     }
@@ -159,6 +168,7 @@ private:
     uint32_t camera_frame_count_, image_width_, image_height_;
     std::string image_encoding_;
     rclcpp::Time last_cmd_time_, last_odom_time_, last_camera_time_;
+    bool has_received_cmd_, has_received_odom_, has_received_camera_;
 };
 
 int main(int argc, char * argv[])
