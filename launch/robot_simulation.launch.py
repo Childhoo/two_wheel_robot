@@ -119,7 +119,26 @@ def generate_launch_description():
         condition=IfCondition(use_autonomous)
     )
     
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        arguments=['-d', rviz_config_file],
+        parameters=[{'use_sim_time': use_sim_time}],
+        condition=IfCondition(use_rviz)
+    )
     
+    # Teleop node  
+    teleop_node = Node(
+        package='teleop_twist_keyboard',
+        executable='teleop_twist_keyboard',
+        name='teleop_twist_keyboard',
+        output='screen',
+        condition=IfCondition(use_teleop),
+        prefix='xterm -e'
+    )
+
     return LaunchDescription([
         declare_use_sim_time,
         declare_use_rviz,
@@ -130,8 +149,8 @@ def generate_launch_description():
         joint_state_publisher_node,
         gazebo_launch,
         spawn_robot,
-        # rviz_node,
-        # teleop_node,
+        rviz_node,
+        teleop_node,
         robot_monitor_node,
         autonomous_navigator_node
         #image_view_node
