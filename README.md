@@ -40,6 +40,8 @@ two_wheel_robot/
 ├── src/
 │   ├── robot_monitor.cpp
 │   └── autonomous_navigator.cpp
+├── scripts/
+│   └── robot_dashboard.py
 ├── launch/
 │   ├── robot_simulation.launch.py
 │   └── visualize_graph.launch.py
